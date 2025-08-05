@@ -5,6 +5,4 @@
 
 void lerArquivo();
 
-/* Auxiliares */
-
 #endif

@@ -3,11 +3,11 @@
 
 void escreverNovoLivro(Livro* livro) {
     Cabecalho* cab = pegarCabecalho();
-    Livro* L = pegarLivro(cab->raizArvore);
+    Livro* L = existe(cab->raizArvore) ? pegarLivro(cab->raizArvore) : NULL;
 
     Livro* aux = NULL;
 
-    while (existe(L)) { 
+    while (L) { 
         if(livro->ID >= L->ID){
             if(existe(L->direita)){
                 aux = L;
@@ -41,14 +41,28 @@ void escreverNovoLivro(Livro* livro) {
     free(cab); free(L); if(aux) free(aux);
 }
 
-void removerLivro(int id) {
+void removerLivro() {
+    printf("\n======= Remover Livro =======\n"
+           "Digite o ID a ser removido\n"
+           "=> ");
+    int ID;
+    scanf("%d", &ID); limparBuffer();
+
+    removerLivroAux(ID);
+
+    printf("\nLivro removido\n");
+
+    pedirEnter();
+}
+
+void removerLivroAux(int id) {
     Cabecalho* cab = pegarCabecalho();
     Livro* livro = pegarID(id, cab);
     Livro* aux = NULL;
 
     if(!livro) {ERRO_ID; free(cab); return;}
 
-    if(vazio(livro)) { // Se for uma "folha"
+    if(folha(livro)) { // Se for uma "folha"
         aux = pegarLivro(livro->pai); // pega o pai de 'livro'
         if(livro->ID >= aux->ID) aux->direita = -1; // se livro>pai muda a direita
         else aux->esquerda = -1;                    // senao muda a esquerda
@@ -62,7 +76,7 @@ void removerLivro(int id) {
     }
     else if(!existe(livro->esquerda)) { // Se nao tiver esquerda
         aux = pegarMin(livro->direita); // pega o minimo da direita
-        copiarLivro(aux, livro); // Copia - menos os filhos
+        copiarLivro(aux, livro); // Copia - menos info da arvore
         removerLivro(aux->ID); // Remove a Folha encontrada
         free(aux); // libera o auxiliar
         escreverLivro(livro); // Atualiza no arquivo DEPOIS de ter deletado a folha
@@ -79,29 +93,46 @@ void removerLivro(int id) {
 }
 
 void listarLivros() {
+    printf("\n======= Livros Cadastrados =======\n");
+    listarLivrosSet();
+    pedirEnter();
+}
+
+void listarLivrosSet() {
     Cabecalho* cab = pegarCabecalho();
     Livro* L = pegarLivro(cab->raizArvore);
     listarLivrosAux(L->ID, cab);
     free(L); free(cab);
 }
 
-void listarLivrosAux(int ID, Cabecalho* cab) {
-    Livro* L = pegarID(ID, cab); free(cab);
-
-    if(!L) return;
-
-    Livro* aux = existe(L->esquerda) ? pegarLivro(L->esquerda) : NULL;
-    if(aux) listarLivrosAux(aux->ID, cab); free(aux);
-
-    imprimirLivro(L);
-
-    aux = existe(L->direita) ? pegarLivro(L->direita) : NULL;
-    if(aux) listarLivrosAux(aux->ID, cab); free(aux); free(L);
+void totalLivros() {
+    Cabecalho* cab = pegarCabecalho();
+    printf("\nExistem (%d) livros cadastrados\n", cab->qntLivros);
+    free(cab);
+    pedirEnter();
 }
 
-void totalLivros();
+void listarRegistrosLivres() {
+    Cabecalho* cab = pegarCabecalho();
+    int pos = cab->cabecaLivre;
 
-void listarRegistrosLivres();
+    Livro* aux = NULL;
+
+    printf("\n====== Registros Livres ======\n");
+    
+    while(existe(pos)) {
+        free(aux);
+        printf("-> %d\n", pos);
+        aux = pegarLivro(pos);
+        pos = aux->esquerda;
+    }
+    
+    printf("\n==============================\n");
+    
+    free(aux); free(cab);
+
+    pedirEnter();
+}
 
 /* Arvore */
 
@@ -136,6 +167,20 @@ void escreverLivro(Livro* livro) {
 }
 
 /* Auxiliares */
+
+void listarLivrosAux(int ID, Cabecalho* cab) {
+    Livro* L = pegarID(ID, cab);
+
+    if(!L) return;
+
+    Livro* aux = existe(L->esquerda) ? pegarLivro(L->esquerda) : NULL;
+    if(aux) listarLivrosAux(aux->ID, cab); free(aux);
+
+    imprimirLivro(L);
+
+    aux = existe(L->direita) ? pegarLivro(L->direita) : NULL;
+    if(aux) listarLivrosAux(aux->ID, cab); free(aux); free(L);
+}
 
 void criarArquivo() {
     FILE* f = fopen("livros.bin", "wb");
@@ -193,8 +238,8 @@ Cabecalho* pegarCabecalho() {
 
 /* - Arvore */
 
-Livro* pegarMax(Livro* livro) {
-    Livro* L = livro;
+Livro* pegarMax(int pos) {
+    Livro* L = pegarLivro(pos);
     Livro* aux = NULL;
     while(existe(L->direita)) {
         aux = L;
@@ -204,8 +249,8 @@ Livro* pegarMax(Livro* livro) {
     return L;
 }
 
-Livro* pegarMin(Livro* livro) {
-    Livro* L = livro;
+Livro* pegarMin(int pos) {
+    Livro* L = pegarLivro(pos);
     Livro* aux = NULL;
     while(existe(L->esquerda)) {
         aux = L;
@@ -216,9 +261,9 @@ Livro* pegarMin(Livro* livro) {
 }
 
 Livro* pegarID(int id, Cabecalho* cab) {
-    Livro* L = pegarLivro(cab->raizArvore);
+    Livro* L = existe(cab->raizArvore) ? pegarLivro(cab->raizArvore) : NULL;
     Livro* aux = NULL;
-    while(existe(L)) {
+    while(L) {
         if(L->ID == id) return L;
         if(id > L->ID) {
             aux = L;

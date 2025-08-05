@@ -6,14 +6,14 @@
 #define ALOC_LIVRO ((Livro*)malloc(sizeof(Livro)))
 
 typedef struct L {
-    char titulo[150],
-         autor[200],
-         editora[50];
+    char titulo[151],
+         autor[201],
+         editora[51];
     int ano,
         edicao,
         exemplares,
         ID;
-    double preco;
+    float preco;
 
     int esquerda,
         direita,
@@ -21,8 +21,10 @@ typedef struct L {
         posAtual;
 }Livro;
 
-void imprimirLivro();
+void imprimirLivro(Livro* livro);
 
 void copiarLivro(Livro* Origem, Livro* Destino);
+
+Livro* novoLivro();
 
 #endif

@@ -1,13 +1,17 @@
 #ifndef ARQBIN_H
 #define ARQBIN_H
 
+typedef struct L Livro;
+
 #include "projeto.h"
+#include "livro.h"
+
 
 #define ARQUIVO "livros.bin"
 
 #define ALOC_CABECALHO ((Cabecalho*)malloc(sizeof(Cabecalho)))
 
-#define vazio(Livro_ptr) ((Livro_ptr->esquerda==-1)&&(Livro_ptr->direita==-1))
+#define folha(Livro_ptr) ((Livro_ptr->esquerda==-1)&&(Livro_ptr->direita==-1))
 #define existe(r) (r!=-1)
 
 typedef struct {
@@ -17,19 +21,31 @@ typedef struct {
         qntLivros;
 }Cabecalho;
 
-void escreverLivro(Livro* livro);
+void escreverNovoLivro(Livro* livro);
 
-void removerLivro(int pos);
+void removerLivro();
 
 void listarLivros();
 
-void totalLivros();
-
 void listarRegistrosLivres();
+
+void totalLivros();
 
 /* Auxiliares */
 
 void criarArquivo();
+
+/* Exclusivas de arqbin */
+
+void removerLivroAux(int id);
+
+int guardarNovoLivro(Livro* livro, Cabecalho* cab);
+
+void escreverLivro(Livro* livro);
+
+void listarLivrosSet();
+
+void listarLivrosAux(int ID, Cabecalho* cab);
 
 Livro* pegarLivro(int pos);
 
@@ -37,11 +53,10 @@ void escreverCabecalho(Cabecalho* cab);
 
 Cabecalho* pegarCabecalho();
 
-/* - Arvore */
+Livro* pegarMax(int pos);
 
-Livro* pegarMax(Livro* livro);
+Livro* pegarMin(int pos);
 
-Livro* pegarMin(Livro* livro);
-
+Livro* pegarID(int id, Cabecalho* cab);
 
 #endif
