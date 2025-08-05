@@ -78,7 +78,26 @@ void removerLivro(int id) {
     }
 }
 
-void listarLivros();
+void listarLivros() {
+    Cabecalho* cab = pegarCabecalho();
+    Livro* L = pegarLivro(cab->raizArvore);
+    listarLivrosAux(L->ID, cab);
+    free(L); free(cab);
+}
+
+void listarLivrosAux(int ID, Cabecalho* cab) {
+    Livro* L = pegarID(ID, cab); free(cab);
+
+    if(!L) return;
+
+    Livro* aux = existe(L->esquerda) ? pegarLivro(L->esquerda) : NULL;
+    if(aux) listarLivrosAux(aux->ID, cab); free(aux);
+
+    imprimirLivro(L);
+
+    aux = existe(L->direita) ? pegarLivro(L->direita) : NULL;
+    if(aux) listarLivrosAux(aux->ID, cab); free(aux); free(L);
+}
 
 void totalLivros();
 
@@ -140,7 +159,7 @@ Livro* pegarLivro(int pos) {
     if (!livro) {ERRO_ALOC_ARQ(f); return NULL;}
 
     fseek(f, sizeof(Cabecalho) + sizeof(Livro)*pos, SEEK_SET);
-    fread(livro, sizeof(Cabecalho), 1, f);
+    fread(livro, sizeof(Livro), 1, f);
 
     fclose(f);
 
