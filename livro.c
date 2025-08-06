@@ -2,10 +2,10 @@
 #include "projeto.h"
 
 void imprimirLivro(Livro* livro) {
-    printf("\n====== %s (%04d) ======\n", livro->titulo, livro->ano);
+    printf("\n====== %s (%04d) ======", livro->titulo, livro->ano);
     printf("\nAutor: %s", livro->autor);
     printf("\nEditora: %s", livro->editora);
-    printf("\nEdicao: %d", livro->editora);
+    printf("\nEdicao: %d", livro->edicao);
     printf("\nQuantidade de Exemplares: %d", livro->exemplares);
     printf("\nPreco: R$ %.02lf", livro->preco);
     printf("\n====== (ID: %d) ======\n", livro->ID);
@@ -37,4 +37,6 @@ Livro* novoLivro() {
     livro->direita = -1;
     livro->pai = -1;
     livro->posAtual = -1;
+
+    return livro;
 }

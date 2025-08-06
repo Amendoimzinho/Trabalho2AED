@@ -1,10 +1,184 @@
 #include "arqbin.h"
 #include "projeto.h"
 
+void removerLivro() {
+    printf("\n======= Remover Livro =======\n"
+           "Digite o ID a ser removido\n"
+           "=> ");
+    int ID;
+    scanf("%d", &ID); limparBuffer();
+
+    Cabecalho* cab = pegarCabecalho();
+    removerLivroAux(ID, cab->raizArvore ,cab);
+    escreverCabecalho(cab); free(cab);
+
+    printf("\nLivro removido\n");
+
+    pedirEnter();
+}
+
+void removerLivroAux(int id, int inicio, Cabecalho* cab) {
+
+    Livro* livro = pegarID(id, inicio);
+    Livro* aux = NULL;
+
+    if(!livro) {ERRO_ID; return;}
+
+    if(folha(livro)) { // Se for uma "folha"
+        erradicar(livro, cab);
+        return;
+    }
+
+    if(!existe(livro->esquerda)) { // Se nao tiver esquerda
+        aux = pegarMin(livro->direita); // Pega o maximo da esquerda
+    }
+    else { // Se tiver esquerda 
+        aux = pegarMax(livro->esquerda); // Pega o maximo da esquerda
+    }
+    copiarLivro(aux, livro); // Copia
+    escreverLivro(livro); // Atualiza o livro
+
+    removerLivroAux(aux->ID, aux->posAtual, cab);
+
+    free(aux); // Libera o aux
+    free(livro); // Libera
+}
+
+void erradicar(Livro* aux, Cabecalho* cab){
+    if(existe(aux->pai)){
+        Livro* P = pegarLivro(aux->pai);
+        if(P->esquerda == aux->posAtual) P->esquerda = -1;
+        else P->direita = -1;
+        escreverLivro(P); free(P);
+    } 
+    aux->esquerda = cab->cabecaLivre;
+    cab->cabecaLivre = aux->posAtual;
+    cab->qntLivros--;
+    escreverLivro(aux);
+}
+
+void listarLivros() {
+    printf("\n======= Livros Cadastrados =======\n");
+    listarLivrosSet();
+    pedirEnter();
+}
+
+void listarLivrosSet() {
+    Cabecalho* cab = pegarCabecalho();
+    Livro* L = pegarLivro(cab->raizArvore);
+    listarLivrosAux(L->ID, cab);
+    free(L); free(cab);
+}
+
+void listarLivrosAux(int ID, Cabecalho* cab) {
+    Livro* L = pegarID(ID, cab->raizArvore);
+
+    if(!L) return;
+
+    Livro* aux = existe(L->esquerda) ? pegarLivro(L->esquerda) : NULL;
+    if(aux) listarLivrosAux(aux->ID, cab); free(aux);
+
+    imprimirLivro(L);
+
+    aux = existe(L->direita) ? pegarLivro(L->direita) : NULL;
+    if(aux) listarLivrosAux(aux->ID, cab); free(aux); free(L);
+}
+
+void totalLivros() {
+    Cabecalho* cab = pegarCabecalho();
+    printf("\nExistem (%d) livros cadastrados\n", cab->qntLivros);
+    free(cab);
+    pedirEnter();
+}
+
+void listarRegistrosLivres() {
+    Cabecalho* cab = pegarCabecalho();
+    int pos = cab->cabecaLivre;
+
+    Livro* aux = NULL;
+
+    printf("\n====== Registros Livres ======\n");
+    
+    while(existe(pos)) {
+        free(aux);
+        printf("-> %d\n", pos);
+        aux = pegarLivro(pos);
+        pos = aux->esquerda;
+    }
+    
+    printf("\n==============================\n");
+    
+    free(aux); free(cab);
+
+    pedirEnter();
+}
+
+void imprimirArvorePorNivel() {
+    Cabecalho* cab = pegarCabecalho();
+    if (!existe(cab->raizArvore)) {
+        printf("\nArvore vazia!\n");
+        free(cab);
+        return;
+    }
+
+    // Cria uma fila simples
+    int* fila = malloc(cab->qntLivros * sizeof(int));
+    int inicio = 0, fim = 0;
+    
+    fila[fim++] = cab->raizArvore;  // Enfileira a raiz
+    int nodesNoNivel = 1;
+    int nodesProxNivel = 0;
+
+    printf("\nArvore por niveis:\n");
+    
+    while (inicio < fim) {
+        Livro* atual = pegarLivro(fila[inicio++]);
+        nodesNoNivel--;
+        
+        printf("%d ", atual->ID);
+
+        // Enfileira filhos
+        if (existe(atual->esquerda)) {
+            fila[fim++] = atual->esquerda;
+            nodesProxNivel++;
+        }
+        if (existe(atual->direita)) {
+            fila[fim++] = atual->direita;
+            nodesProxNivel++;
+        }
+
+        // Quebra de linha quando termina um nível
+        if (nodesNoNivel == 0) {
+            printf("\n");
+            nodesNoNivel = nodesProxNivel;
+            nodesProxNivel = 0;
+        }
+        
+        free(atual);
+    }
+    
+    free(fila);
+    free(cab);
+
+    pedirEnter();
+}
+
+/* Funcoes de Arquivo */
+
 void escreverNovoLivro(Livro* livro) {
     Cabecalho* cab = pegarCabecalho();
-    Livro* L = existe(cab->raizArvore) ? pegarLivro(cab->raizArvore) : NULL;
 
+     if (!existe(cab->raizArvore)) {
+        livro->pai = -1;  // Raiz não tem pai
+        livro->posAtual = guardarNovoLivro(livro, cab);
+        cab->raizArvore = livro->posAtual;
+        escreverLivro(livro);
+        escreverCabecalho(cab);
+        free(cab);
+        return;
+    }
+
+    Livro* L = pegarLivro(cab->raizArvore);
     Livro* aux = NULL;
 
     while (L) { 
@@ -41,101 +215,6 @@ void escreverNovoLivro(Livro* livro) {
     free(cab); free(L); if(aux) free(aux);
 }
 
-void removerLivro() {
-    printf("\n======= Remover Livro =======\n"
-           "Digite o ID a ser removido\n"
-           "=> ");
-    int ID;
-    scanf("%d", &ID); limparBuffer();
-
-    removerLivroAux(ID);
-
-    printf("\nLivro removido\n");
-
-    pedirEnter();
-}
-
-void removerLivroAux(int id) {
-    Cabecalho* cab = pegarCabecalho();
-    Livro* livro = pegarID(id, cab);
-    Livro* aux = NULL;
-
-    if(!livro) {ERRO_ID; free(cab); return;}
-
-    if(folha(livro)) { // Se for uma "folha"
-        aux = pegarLivro(livro->pai); // pega o pai de 'livro'
-        if(livro->ID >= aux->ID) aux->direita = -1; // se livro>pai muda a direita
-        else aux->esquerda = -1;                    // senao muda a esquerda
-        free(aux); // Libera o pai
-        livro->esquerda = cab->cabecaLivre; // Atualiza a lista de livres
-        cab->cabecaLivre = livro->posAtual; // Atualiza a cabeca
-        cab->qntLivros--; // Atualiza a quantidade de livros
-        escreverLivro(livro); // Atualiza o livro no arquivo
-        escreverCabecalho(cab); // Atualiza o cabecalho
-        free(cab); free(livro); // libera tudo
-    }
-    else if(!existe(livro->esquerda)) { // Se nao tiver esquerda
-        aux = pegarMin(livro->direita); // pega o minimo da direita
-        copiarLivro(aux, livro); // Copia - menos info da arvore
-        removerLivro(aux->ID); // Remove a Folha encontrada
-        free(aux); // libera o auxiliar
-        escreverLivro(livro); // Atualiza no arquivo DEPOIS de ter deletado a folha
-        free(cab); free(livro); // Libera tudo
-    }
-    else { // Se tiver esquerda 
-        aux = pegarMax(livro->esquerda); // Pega o maximo da esquerda
-        copiarLivro(aux, livro); // Copia
-        removerLivro(aux->ID); // Remove a folha
-        free(aux); // Libera o aux
-        escreverLivro(livro); // Atualiza o livro
-        free(cab); free(livro); // Libera
-    }
-}
-
-void listarLivros() {
-    printf("\n======= Livros Cadastrados =======\n");
-    listarLivrosSet();
-    pedirEnter();
-}
-
-void listarLivrosSet() {
-    Cabecalho* cab = pegarCabecalho();
-    Livro* L = pegarLivro(cab->raizArvore);
-    listarLivrosAux(L->ID, cab);
-    free(L); free(cab);
-}
-
-void totalLivros() {
-    Cabecalho* cab = pegarCabecalho();
-    printf("\nExistem (%d) livros cadastrados\n", cab->qntLivros);
-    free(cab);
-    pedirEnter();
-}
-
-void listarRegistrosLivres() {
-    Cabecalho* cab = pegarCabecalho();
-    int pos = cab->cabecaLivre;
-
-    Livro* aux = NULL;
-
-    printf("\n====== Registros Livres ======\n");
-    
-    while(existe(pos)) {
-        free(aux);
-        printf("-> %d\n", pos);
-        aux = pegarLivro(pos);
-        pos = aux->esquerda;
-    }
-    
-    printf("\n==============================\n");
-    
-    free(aux); free(cab);
-
-    pedirEnter();
-}
-
-/* Arvore */
-
 int guardarNovoLivro(Livro* livro, Cabecalho* cab) {
     Livro* aux = NULL;
 
@@ -164,22 +243,6 @@ void escreverLivro(Livro* livro) {
     fwrite(livro, sizeof(Livro), 1, f);
 
     fclose(f);
-}
-
-/* Auxiliares */
-
-void listarLivrosAux(int ID, Cabecalho* cab) {
-    Livro* L = pegarID(ID, cab);
-
-    if(!L) return;
-
-    Livro* aux = existe(L->esquerda) ? pegarLivro(L->esquerda) : NULL;
-    if(aux) listarLivrosAux(aux->ID, cab); free(aux);
-
-    imprimirLivro(L);
-
-    aux = existe(L->direita) ? pegarLivro(L->direita) : NULL;
-    if(aux) listarLivrosAux(aux->ID, cab); free(aux); free(L);
 }
 
 void criarArquivo() {
@@ -211,16 +274,6 @@ Livro* pegarLivro(int pos) {
     return livro;
 }
 
-void escreverCabecalho(Cabecalho* cab) {
-    FILE* f = fopen(ARQUIVO, "r+b");
-    if(!f) ERRO_ARQ;
-
-    fseek(f, 0, SEEK_SET);
-    fwrite(cab, sizeof(Livro), 1, f);
-
-    fclose(f);
-}
-
 Cabecalho* pegarCabecalho() {
     FILE* f = fopen(ARQUIVO, "rb");
     if(!f) ERRO_ARQ;
@@ -236,7 +289,17 @@ Cabecalho* pegarCabecalho() {
     return cab;
 }
 
-/* - Arvore */
+void escreverCabecalho(Cabecalho* cab) {
+    FILE* f = fopen(ARQUIVO, "r+b");
+    if(!f) ERRO_ARQ;
+
+    fseek(f, 0, SEEK_SET);
+    fwrite(cab, sizeof(Cabecalho), 1, f);
+
+    fclose(f);
+}
+
+/* Arvore */
 
 Livro* pegarMax(int pos) {
     Livro* L = pegarLivro(pos);
@@ -260,8 +323,8 @@ Livro* pegarMin(int pos) {
     return L;
 }
 
-Livro* pegarID(int id, Cabecalho* cab) {
-    Livro* L = existe(cab->raizArvore) ? pegarLivro(cab->raizArvore) : NULL;
+Livro* pegarID(int id, int inicio) {
+    Livro* L = existe(inicio) ? pegarLivro(inicio) : NULL;
     Livro* aux = NULL;
     while(L) {
         if(L->ID == id) return L;
@@ -277,4 +340,48 @@ Livro* pegarID(int id, Cabecalho* cab) {
         }
     }
     return NULL;
+}
+
+/* DEBUG */
+
+void debugArquivoBinario() {
+    Cabecalho* cab = pegarCabecalho();
+    if (!cab) return;
+
+    printf("\n=== DEBUG ARQUIVO BINARIO ===\n");
+    printf("Raiz: %d\n", cab->raizArvore);
+    printf("Topo: %d\n", cab->topo);
+    printf("Qtd Livros: %d\n", cab->qntLivros);
+    printf("Cabeça Livre: %d\n", cab->cabecaLivre);
+
+    printf("\n\n=== ESTRUTURA DA ARVORE ===");
+    percorreArvore(cab->raizArvore);
+
+    printf("\n\n=== REGISTROS LIVRES ===");
+    int pos = cab->cabecaLivre;
+    while (existe(pos)) {
+        Livro* l = pegarLivro(pos);
+        printf("\nPos %d (proximo: %d)", pos, l->esquerda);
+        pos = l->esquerda;
+        free(l);
+    }
+
+    printf("\n\n============================");
+    free(cab);
+    pedirEnter();
+}
+
+void percorreArvore(int pos) {
+    if (!existe(pos)) return;
+        
+    Livro* l = pegarLivro(pos);
+    if (!l) return;
+        
+    printf("\nPos %d: ID %d - %s", pos, l->ID, l->titulo);
+    printf("\n  Esquerda: %d, Direita: %d, Pai: %d", l->esquerda, l->direita, l->pai);
+        
+    percorreArvore(l->esquerda);
+    percorreArvore(l->direita);
+        
+    free(l);
 }

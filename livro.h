@@ -5,6 +5,7 @@
 
 #define ALOC_LIVRO ((Livro*)malloc(sizeof(Livro)))
 
+/// @brief 
 typedef struct L {
     char titulo[151],
          autor[201],
@@ -21,10 +22,17 @@ typedef struct L {
         posAtual;
 }Livro;
 
+/// @brief 
+/// @param livro 
 void imprimirLivro(Livro* livro);
 
+/// @brief 
+/// @param Origem 
+/// @param Destino 
 void copiarLivro(Livro* Origem, Livro* Destino);
 
+/// @brief 
+/// @return 
 Livro* novoLivro();
 
 #endif

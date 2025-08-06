@@ -10,32 +10,39 @@ void lerArquivo() {
     limparBuffer();
 
     FILE* input = fopen(arq, "r");
-    if (!input) { ERRO_ARQ; return; }
+    if (!input) { ERRO_ARQ; pedirEnter(); return; }
 
     char buffer[500];
     
-    while (fscanf(input, " %[^\n]", buffer) != EOF) {
-        Livro* livro = novoLivro();
+    while (fgets(buffer, sizeof(buffer), input)) {
+        buffer[strcspn(buffer, "\r\n")] = '\0';  // Remove \r e \n
         
-        if (sscanf(buffer, "%d;%150[^;];%200[^;];%51[^;];%d;%d;%d;%lf", &livro->ID ,
-                                                                        livro->titulo,
-                                                                        livro->autor, 
-                                                                        livro->editora,
-                                                                        &livro->edicao,
-                                                                        &livro->exemplares, 
-                                                                        &livro->ano, 
-                                                                        &livro->preco) != 8) {
+        Livro* livro = novoLivro();
+        if (!livro) { ERRO_ALOC; continue; }
+
+        // Substitui vírgula por ponto no preço
+        char* p = buffer;
+        while (*p) {
+            if (*p == ',') *p = '.';
+            p++;
+        }
+
+        if (sscanf(buffer, "%d;%[^;];%[^;];%[^;];%d;%d;%d;%f", 
+                  &livro->ID, livro->titulo, livro->autor, livro->editora,
+                  &livro->edicao, &livro->ano, &livro->exemplares, &livro->preco) != 8) {
             ERRO_LEITURA;
             free(livro);
-            continue;  // Pula linha inválida
+            continue;
         }
 
         strcpy(livro->titulo, tiraEspacos(livro->titulo));
         strcpy(livro->autor, tiraEspacos(livro->autor));
-        strcpy(livro->editora , tiraEspacos(livro->editora));
+        strcpy(livro->editora, tiraEspacos(livro->editora));
 
         escreverNovoLivro(livro);
+        free(livro);
     }
 
     fclose(input);
+    pedirEnter();
 }

@@ -53,6 +53,7 @@ int abrirMenuOutros() {
     printf("\n======= Menu Outros =======\n"
            "1 - Criar arquivo de dados\n"
            "2 - Ler arquivo de texto\n"
+           "3 - Imprimir niveis\n"
            "0 - Voltar\n"
            "=============================\n"
            "=> ");
@@ -63,6 +64,8 @@ int abrirMenuOutros() {
     switch (op) {
         case 1 : criarArquivo(); break;
         case 2 : lerArquivo(); break;
+        case 3 : imprimirArvorePorNivel(); break;
+        case 123 : debugArquivoBinario(); break;
         case 0 : break;
         default : ERRO_OPCAO;
     }

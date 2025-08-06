@@ -14,6 +14,7 @@ typedef struct L Livro;
 #define folha(Livro_ptr) ((Livro_ptr->esquerda==-1)&&(Livro_ptr->direita==-1))
 #define existe(r) (r!=-1)
 
+/// @brief 
 typedef struct {
     int raizArvore,
         cabecaLivre,
@@ -21,42 +22,96 @@ typedef struct {
         qntLivros;
 }Cabecalho;
 
-void escreverNovoLivro(Livro* livro);
-
+/// @brief 
 void removerLivro();
 
+/// @brief 
+/// @param id 
+/// @param inicio 
+/// @param cab 
+void removerLivroAux(int id, int inicio, Cabecalho* cab);
+
+/// @brief 
+/// @param aux 
+/// @param cab 
+void erradicar(Livro* aux, Cabecalho* cab);
+
+/// @brief 
 void listarLivros();
 
-void listarRegistrosLivres();
-
-void totalLivros();
-
-/* Auxiliares */
-
-void criarArquivo();
-
-/* Exclusivas de arqbin */
-
-void removerLivroAux(int id);
-
-int guardarNovoLivro(Livro* livro, Cabecalho* cab);
-
-void escreverLivro(Livro* livro);
-
+/// @brief 
 void listarLivrosSet();
 
+/// @brief 
+/// @param ID 
+/// @param cab 
 void listarLivrosAux(int ID, Cabecalho* cab);
 
+/// @brief 
+void totalLivros();
+
+/// @brief 
+void listarRegistrosLivres();
+
+/// @brief 
+void imprimirArvorePorNivel();
+
+/* Funcoes de Arquivo */
+
+/// @brief 
+/// @param livro 
+void escreverNovoLivro(Livro* livro);
+
+/// @brief 
+/// @param livro 
+/// @param cab 
+/// @return 
+int guardarNovoLivro(Livro* livro, Cabecalho* cab);
+
+/// @brief 
+/// @param livro 
+void escreverLivro(Livro* livro);
+
+/// @brief 
+void criarArquivo();
+
+/// @brief 
+/// @param pos 
+/// @return 
 Livro* pegarLivro(int pos);
 
-void escreverCabecalho(Cabecalho* cab);
-
+/// @brief 
+/// @return 
 Cabecalho* pegarCabecalho();
 
+/// @brief 
+/// @param cab 
+void escreverCabecalho(Cabecalho* cab);
+
+/* Arvore */
+
+/// @brief 
+/// @param pos 
+/// @return 
 Livro* pegarMax(int pos);
 
+/// @brief 
+/// @param pos 
+/// @return 
 Livro* pegarMin(int pos);
 
-Livro* pegarID(int id, Cabecalho* cab);
+/// @brief 
+/// @param id 
+/// @param inicio 
+/// @return 
+Livro* pegarID(int id, int inicio);
+
+/* DEBUG */
+
+void debugArquivoBinario();
+
+void percorreArvore(int pos);
+
+
 
 #endif
