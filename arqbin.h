@@ -22,96 +22,88 @@ typedef struct {
         qntLivros;
 }Cabecalho;
 
-/// @brief 
+/// @brief Pede um ID para o usuario, para remover
 void removerLivro();
 
-/// @brief 
-/// @param id 
-/// @param inicio 
-/// @param cab 
+/// @brief Remove um livro, comeca a busca a partir do inicio
+/// @param id ID a ser removido
+/// @param inicio Posicao inicial da busca
+/// @param cab Cabecalho do arquivo
 void removerLivroAux(int id, int inicio, Cabecalho* cab);
 
-/// @brief 
-/// @param aux 
-/// @param cab 
-void erradicar(Livro* aux, Cabecalho* cab);
+/// @brief Remove um livro do arquivo e atualiza seu pai
+/// @param aux Livro a ser removido
+/// @param cab Cabecalho a ser atualizado
+void deletarLivro(Livro* aux, Cabecalho* cab);
 
-/// @brief 
+/// @brief Lista todos os livros da arvore (inOrder)
 void listarLivros();
 
-/// @brief 
-void listarLivrosSet();
+/// @brief Funcao recursiva que imprime livro por livro
+/// @param pos Posicao do livro que vai ser printado
+void listarLivrosAux(int pos);
 
-/// @brief 
-/// @param ID 
-/// @param cab 
-void listarLivrosAux(int ID, Cabecalho* cab);
-
-/// @brief 
+/// @brief Imprime o total de livros cadastrados
 void totalLivros();
 
-/// @brief 
+/// @brief Imprime as posicoes disponiveis
 void listarRegistrosLivres();
 
-/// @brief 
+/// @brief Imprime os IDs cadastrados por nivel
 void imprimirArvorePorNivel();
 
 /* Funcoes de Arquivo */
 
-/// @brief 
-/// @param livro 
+/// @brief Adiciona um novo livro no arquivo
+/// @param livro Livro a ser adicionado
 void escreverNovoLivro(Livro* livro);
 
-/// @brief 
-/// @param livro 
-/// @param cab 
-/// @return 
+/// @brief Funcao auxiliar, ela ve se consegue adicionar na lista livre
+/// @param livro Livro a ser adicionado
+/// @param cab cabecalho do arquivo
+/// @return A posicao na qual o livro foi adicionado
 int guardarNovoLivro(Livro* livro, Cabecalho* cab);
 
-/// @brief 
-/// @param livro 
+/// @brief Escreve o livro na posicao dele
+/// @param livro Livro a ser escrito
 void escreverLivro(Livro* livro);
 
-/// @brief 
+/// @brief Cria/Reseta o arquivo binario
 void criarArquivo();
 
-/// @brief 
-/// @param pos 
-/// @return 
+/// @brief Pega um livro na posicao enviada (sem error-warning!)
+/// @param pos Posicao do livro
+/// @return O ponteiro do livro encontrado
 Livro* pegarLivro(int pos);
 
-/// @brief 
-/// @return 
+/// @brief Pega o cabecalho do arquivo
+/// @return O ponteiro do cabecalho lido
 Cabecalho* pegarCabecalho();
 
-/// @brief 
-/// @param cab 
+/// @brief Escreve o cabecalho no arquivo
+/// @param cab Cabecalho a ser escrito
 void escreverCabecalho(Cabecalho* cab);
 
 /* Arvore */
 
-/// @brief 
-/// @param pos 
-/// @return 
+/// @brief Pega o maior ID a partir da posicao enviada (sem error-warning!)
+/// @param pos Posicao inicial
+/// @return O ponteiro do livro com maior ID
 Livro* pegarMax(int pos);
 
-/// @brief 
-/// @param pos 
-/// @return 
+/// @brief Pega o menor ID a partir da posicao enviada (sem error-warning!)
+/// @param pos Posicao inicial
+/// @return O ponteiro do livro com menor ID
 Livro* pegarMin(int pos);
 
-/// @brief 
-/// @param id 
-/// @param inicio 
-/// @return 
+/// @brief Procura o ID no arquivo
+/// @param id ID a ser encontrado
+/// @param inicio Posicao de inicio da busca
+/// @return O livro encontrado ou NULL
 Livro* pegarID(int id, int inicio);
 
 /* DEBUG */
 
 void debugArquivoBinario();
-
-void percorreArvore(int pos);
-
-
 
 #endif

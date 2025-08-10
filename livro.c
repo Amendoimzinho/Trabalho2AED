@@ -40,3 +40,33 @@ Livro* novoLivro() {
 
     return livro;
 }
+
+void novoLivroUsuario() {
+    Livro* newLivro = novoLivro();
+    if (!newLivro){ERRO_ALOC; return;}
+
+    printf("====== Cadastrando Livro ======"
+           "\n(digite apenas o pedido e cuidado com as quebras de linha!!)\n\n");
+
+    printf("Digite o ID do Livro\n=> ");
+    scanf("%d", &newLivro->ID); limparBuffer();
+    printf("Digite o Titulo\n=> ");
+    scanf("%150[^\n]", newLivro->titulo);limparBuffer();
+    printf("Digite o nome do Autor:\n=> ");
+    scanf("%200[^\n]", newLivro->autor);limparBuffer();
+    printf("Digite o nome da Editora:\n=> ");
+    scanf("%50[^\n]", newLivro->editora);limparBuffer();
+    printf("Digite a Edicao:\n=> ");
+    scanf("%d", &(newLivro->edicao));limparBuffer();
+    printf("Digite o Ano:\n=> ");
+    scanf("%d", &(newLivro->ano));limparBuffer();
+    printf("Digite a quantidade de Exemplares:\n=> ");
+    scanf("%d", &(newLivro->exemplares));limparBuffer();
+    printf("Digite o preco (float):\n=> ");
+    scanf("%f", &(newLivro->preco));limparBuffer();
+
+    escreverNovoLivro(newLivro);
+    free(newLivro);
+
+    pedirEnter();
+}

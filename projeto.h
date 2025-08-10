@@ -18,32 +18,32 @@
 
 /* Menu */
 
-/// @brief 
-/// @return 
+/// @brief Abre o menu principal
+/// @return A operacao do usuario
 int abrirMenuPrincipal();
 
-/// @brief 
-/// @return 
+/// @brief Abre o menu de livros
+/// @return A opcao do usuario
 int abrirMenuLivros();
 
-/// @brief 
-/// @return 
+/// @brief Abre o menu de outras opcoes
+/// @return A opcao do usuario
 int abrirMenuOutros();
 
 /* Auxiliares */
 
-/// @brief 
+/// @brief Limpa o buffer stdin
 void limparBuffer();
 
-/// @brief 
+/// @brief Limpa o terminal
 void limparTerminal();
 
-/// @brief 
-/// @param str 
-/// @return 
+/// @brief Tira os espacos inuteis antes e depois de uma string
+/// @param str Uma string qualquer
+/// @return A string sem os espacos
 char* tiraEspacos(char* str);
 
-/// @brief 
+/// @brief Pausa o sistema e pede um enter para o usuario
 void pedirEnter();
 
 #endif

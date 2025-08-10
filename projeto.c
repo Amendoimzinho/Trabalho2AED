@@ -41,6 +41,7 @@ int abrirMenuLivros() {
         case 2 : listarLivros(); break;
         case 3 : listarRegistrosLivres(); break;
         case 4 : totalLivros(); break;
+        case 5 : novoLivroUsuario(); break;
         case 0 : break;
         default : ERRO_OPCAO;
     }

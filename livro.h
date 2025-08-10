@@ -22,17 +22,20 @@ typedef struct L {
         posAtual;
 }Livro;
 
-/// @brief 
-/// @param livro 
-void imprimirLivro(Livro* livro);
-
-/// @brief 
-/// @param Origem 
-/// @param Destino 
+/// @brief Copia as informacoes de um livro par outro (menos as informacoes da arvore)
+/// @param Origem Livro de origem das informacoes
+/// @param Destino Livro de destino para as informacoes
 void copiarLivro(Livro* Origem, Livro* Destino);
 
-/// @brief 
-/// @return 
+/// @brief Aloca e inicia um novo livro
+/// @return O ponteiro alocado
 Livro* novoLivro();
+
+/// @brief Imprime um livro
+/// @param livro Um livro valido
+void imprimirLivro(Livro* livro);
+
+/// @brief Pede informacoes para o usuario para criar um novo livro
+void novoLivroUsuario();
 
 #endif
