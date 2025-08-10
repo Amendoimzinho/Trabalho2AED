@@ -30,7 +30,7 @@ int abrirMenuLivros() {
            "3 - Listar registros livres\n"
            "4 - Total de livros\n"
            "0 - Voltar\n"
-           "=============================\n"
+           "===========================\n"
            "=> ");
 
     int op;
@@ -56,7 +56,7 @@ int abrirMenuOutros() {
            "2 - Ler arquivo de texto\n"
            "3 - Imprimir niveis\n"
            "0 - Voltar\n"
-           "=============================\n"
+           "===========================\n"
            "=> ");
            
     int op;
